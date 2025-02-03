@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Buttons</title>
+    <style>
+        body {
+           
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image:url(bobo.jpg);
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            opacity: 1;
+            transition: opacity 1s ease; /* For fade effect */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color:rgb(116, 116, 116);
+        }
+       
+        .button-container {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            width: 300px;
+            height: 50px;
+        }
+        .message {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgb(176, 204, 212);
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        button {
+            padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px; /* Rounded corners */
+    border: none;
+    background: linear-gradient(145deg, #6e7dff, #5560ea); /* Gradient background */
+    color: white;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2), -2px -2px 5px rgba(255, 255, 255, 0.3); /* Soft shadow */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+            position: relative;
+        }
+        button:hover {
+    background: linear-gradient(145deg, #5560ea, #6e7dff); /* Hover effect */
+    transform: translateY(-3px); /* Lift effect */
+}
+
+button:active {
+    background: linear-gradient(145deg, #6e7dff, #5560ea);
+    transform: translateY(1px); /* Slight press effect */
+}
+
+        #moveButton {
+            position: absolute;
+            top: 60px; /* Position adjusted so it appears below the title */
+            left: 0;
+        }
+        .fade-out {
+            opacity: 0;
+        }
+        #wha{
+            color:linear-gradient(145deg, #6e7dff, #5560ea);
+        }
+    </style>
+</head>
+<body>
+        <h1>I KNOW</h1>
+    <h1 id="wha">Do You Love Me?</h1>
+   
+    <div class="button-container">
+        <button id="moveButton">No</button>
+        <button id="messageButton">yessss</button>
+    </div>
+   
+    <script>
+        const moveButton = document.getElementById("moveButton");
+        const messageButton = document.getElementById("messageButton");
+        const body = document.body;
+        const container = document.querySelector(".button-container");
+
+        // Function to move the button randomly within the container
+        function moveButtonRandomly() {
+            let containerRect = container.getBoundingClientRect();
+            let buttonRect = moveButton.getBoundingClientRect();
+            let otherButtonRect = messageButton.getBoundingClientRect();
+            let titleRect = document.querySelector("h1").getBoundingClientRect();
+
+            let newX, newY;
+
+            // Generate random positions for the button within the container boundaries
+            do {
+                newX = Math.random() * (containerRect.width - buttonRect.width);
+                newY = Math.random() * (containerRect.width - buttonRect.height);
+
+                // Check for overlap with title or other button
+            } while (
+                (newX + buttonRect.width > otherButtonRect.left - containerRect.left &&
+                 newX < otherButtonRect.right - containerRect.left &&
+                 newY + buttonRect.height > otherButtonRect.top - containerRect.top &&
+                 newY < otherButtonRect.bottom - containerRect.top) ||
+                (newX + buttonRect.width > titleRect.left - containerRect.left &&
+                 newX < titleRect.right - containerRect.left &&
+                 newY + buttonRect.height > titleRect.top - containerRect.top &&
+                 newY < titleRect.bottom - containerRect.top)
+            );
+
+            moveButton.style.left = newX + "px";
+            moveButton.style.top = newY + "px";
+        }
+
+        moveButton.addEventListener("click", moveButtonRandomly);
+        messageButton.addEventListener("click", function () {
+            let count = 100; // Number of messages to spawn
+            let delay = 100; // Delay in milliseconds (0.3s) between each message
+
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createMessage();
+                }, i * delay); // Each message appears one after another
+            }
+        });
+        function createMessage() {
+            const message = document.createElement("p");
+            message.classList.add("message");
+            message.innerText = "I LOVE YOU MORE!!";
+
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            let randomX, randomY;
+            let safeArea = document.querySelector(".button-container").getBoundingClientRect();
+
+            do {
+                randomX = Math.random() * (screenWidth - 200);
+                randomY = Math.random() * (screenHeight - 50);
+            } while (
+                randomY > safeArea.top - 50 && randomY < safeArea.bottom + 50 &&
+                randomX > safeArea.left - 50 && randomX < safeArea.right + 50
+            );
+
+            message.style.left = `${randomX}px`;
+            message.style.top = `${randomY}px`;
+
+            body.appendChild(message);
+        }
+    </script>
+
+</body>
+</html>
